@@ -3,7 +3,7 @@ File: data_parser.py
 """
 
 import xml.etree.ElementTree as ET
-
+import cv2
 
 class stage():
     def __init__(self, index, threshold, max_weak_count):
@@ -83,6 +83,7 @@ class cascadeParser:
                         w_classifier = weakClassifier(left,right,index,threshold)
                         n_stage.weakClassifiers.append(w_classifier)
                 stage_list.append(n_stage)
+        verify = cv2.CascadeClassifier(file_string)
 
         feature_list = []
         i = 0
@@ -95,18 +96,15 @@ class cascadeParser:
                 for rects in feature_e.iter('rects'):  # .findall('./cascade/stages'):
                     for rect_e in rects.iter('_'):
                         rect_t = rect_e.text.split(' ')
-                        #print(rect_t)
+                        # print(rect_t)
                         rects_list.append(rect(int(rect_t[10]),int(rect_t[11]),
                                               int(rect_t[12]),int(rect_t[13]),
-                                              float(rect_t[14]))) #x,y,w,h,weight
+                                              float(rect_t[14]))) # x,y,w,h,weight
 
                 feature_list.append(feature(i,rects_list))
                 i += 1
 
-
-
-
-        return stage_list, feature_list
+        return stage_list, feature_list, verify
 
 
 
