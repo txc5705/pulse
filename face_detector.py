@@ -27,7 +27,7 @@ class faceDetector:
             rw = int(scale*rect.width)
             rh = int(scale*rect.height)
             weight = float(rect.weight)
-            sum += weight * (i[x+rx+rw][y+ry+h]+i[x+rx][y+ry]-i[x+rx+w][y+ry]-i[x+rx][y+ry+h])
+            sum += weight * (i[x+rx+rw][y+ry+rh]+i[x+rx][y+ry]-i[x+rx+w][y+ry]-i[x+rx][y+ry+rh])
 
         return sum, inv_area, norm
 
@@ -67,21 +67,22 @@ class faceDetector:
         if flags == cv2.cv.CV_HAAR_SCALE_IMAGE:
             scale *= index+scale
         width, height = integral.shape
-        self.pix = [[int((30 * photo[y, x][0] + 59 * photo[y, x][1] + 11 * photo[y, x][2]) / 100) \
-                for x in range(width)] for y in range(height)]
+        self.pix = [[int((30 * photo[y, x][0] + 59 * photo[y, x][1] + 11 * photo[y, x][2]) / 100)
+                    for x in range(width)] for y in range(height)]
         self.pix2 = [[self.pix[y][x] for x in range(width)] for y in range(height)]
         while window_width < width and window_height < height:
             window_width = window_height = int(scale*20)
-            step = int(scale*2.4)
             x = 0
             while x < height-scale*24:
                 y = 0
                 while y < width-scale*24:
                     if self.evaluate(x,y,window_width,window_height,scale):
                         results.append((x,y,window_width,window_height))
+        return results
 
     def detect_face(self, photo):
         return self.cascade.detectMultiScale(photo,1.1,5)
+
 
 if __name__ == "__main__":
     d = faceDetector("haarcascade_frontalface_default.xml")
